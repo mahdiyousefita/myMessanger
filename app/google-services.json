@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "529464586313",
+    "project_id": "messenger-a015c",
+    "storage_bucket": "messenger-a015c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529464586313:android:d9f9af3ce052286d6ecf98",
+        "android_client_info": {
+          "package_name": "com.example.tasksymphony2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4E2zglDQZDy1KjUl6Ef1TpA6Y_0Ux5FA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
