@@ -71,7 +71,7 @@ fun LoginPage(navController: NavController) {
     LaunchedEffect(key1 = uiState.value) {
         when(uiState.value){
             is SinInState.Success -> {
-                Toast.makeText(contect, "ok", Toast.LENGTH_SHORT).show()
+                navController.navigate("home_screen")
             }
             is SinInState.Error -> {
                 Toast.makeText(contect, "not ok", Toast.LENGTH_SHORT).show()

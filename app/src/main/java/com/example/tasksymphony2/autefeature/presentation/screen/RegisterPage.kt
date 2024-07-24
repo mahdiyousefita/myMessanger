@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.tasksymphony2.autefeature.presentation.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,6 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -46,14 +52,52 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.tasksymphony2.R
 import com.example.tasksymphony2.autefeature.presentation.component.Visibility
 import com.example.tasksymphony2.autefeature.presentation.component.VisibilityOff
+import com.example.tasksymphony2.autefeature.presentation.viewmodel.RegisterViewModel
+import com.example.tasksymphony2.autefeature.presentation.viewmodel.SignUpState
+import com.example.tasksymphony2.autefeature.presentation.viewmodel.SinInState
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPage(navController: NavController) {
+
+    val viewModel: RegisterViewModel = hiltViewModel()
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var name by rememberSaveable { mutableStateOf("") }
+
+    val keyboardControllerEmail = LocalSoftwareKeyboardController.current
+    var email by rememberSaveable { mutableStateOf("") }
+
+    val keyboardControllerPass = LocalSoftwareKeyboardController.current
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordHidden by rememberSaveable { mutableStateOf(true) }
+
+    val keyboardControllerConfirm = LocalSoftwareKeyboardController.current
+    var Confirmpassword by rememberSaveable { mutableStateOf("") }
+    var ConfirmpasswordHidden by rememberSaveable { mutableStateOf(true) }
+
+    val uiState = viewModel.state.collectAsState()
+
+    val contect = LocalContext.current
+
+    LaunchedEffect(key1 = uiState.value) {
+        when(uiState.value){
+            is SignUpState.Success -> {
+                navController.navigate("home_screen")
+            }
+            is SignUpState.Error -> {
+                Toast.makeText(contect, "not ok", Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +127,8 @@ fun RegisterPage(navController: NavController) {
 
                 )
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                 ,
@@ -105,19 +150,143 @@ fun RegisterPage(navController: NavController) {
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                RegisterName()
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
+                    label = {
+                        Text("Name",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium,
+                        ) },
+                    placeholder = { Text(text = "Name") },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            // do something here
+                        }
+                    )
+
+                )
 
 //                Spacer(modifier = Modifier.padding(3.dp))
 //                RegisterPhone()
 
                 Spacer(modifier = Modifier.padding(3.dp))
-                RegisterEmail()
+
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
+                    label = {
+                        Text("Email Address",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium,
+                        ) },
+                    placeholder = { Text(text = "Email Address") },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Email
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardControllerEmail?.hide()
+                            // do something here
+                        }
+                    )
+
+                )
 
                 Spacer(modifier = Modifier.padding(3.dp))
-                RegisterPassword()
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
+                    label = {
+                        Text("Enter Password",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium,
+                        ) },
+                    visualTransformation =
+                    if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                    //  keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordHidden = !passwordHidden }) {
+                            val visibilityIcon =
+                                if (passwordHidden) Visibility else VisibilityOff
+                            // Please provide localized description for accessibility services
+                            val description = if (passwordHidden) "Show password" else "Hide password"
+                            Icon(imageVector = visibilityIcon, contentDescription = description)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardControllerPass?.hide()
+                            // do something here
+                        }
+                    )
+                )
 
                 Spacer(modifier = Modifier.padding(3.dp))
-                RegisterPasswordConfirm()
+                OutlinedTextField(
+                    value = Confirmpassword,
+                    onValueChange = { Confirmpassword = it },
+                    shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
+                    label = {
+                        Text("Confirm Password",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium,
+                        ) },
+                    visualTransformation =
+                    if (ConfirmpasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+                    //  keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        keyboardType = KeyboardType.Password
+                    ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary),
+                    trailingIcon = {
+                        IconButton(onClick = { ConfirmpasswordHidden = !ConfirmpasswordHidden }) {
+                            val visibilityIcon =
+                                if (ConfirmpasswordHidden) Visibility else VisibilityOff
+                            // Please provide localized description for accessibility services
+                            val description = if (ConfirmpasswordHidden) "Show password" else "Hide password"
+                            Icon(imageVector = visibilityIcon, contentDescription = description)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardControllerConfirm?.hide()
+                            // do something here
+                        }
+                    ),
+                    //isError = password.isNotEmpty() && mainPass.isNotEmpty() && mainPass != password
+                )
 
 
                 val gradientColor = listOf(Color(0xFF484BF1), Color(0xFF673AB7))
@@ -133,12 +302,50 @@ fun RegisterPage(navController: NavController) {
                  ) {
                      Text(text = "Login", fontSize = 20.sp)
                  }*/
-                GradientButton(
-                    gradientColors = gradientColor,
-                    cornerRadius = cornerRadius,
-                    nameButton = "Create An Account",
-                    roundedCornerShape = RoundedCornerShape(topStart = 30.dp,bottomEnd = 30.dp)
-                )
+
+                androidx.compose.material3.Button(
+                    enabled = email.isNotEmpty() &&
+                            password.isNotEmpty() &&
+                            Confirmpassword.isNotEmpty() &&
+                            name.isNotEmpty() &&
+                            (uiState.value == SignUpState.Nothing || uiState.value == SignUpState.Error),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 32.dp, end = 32.dp),
+                    onClick = {
+                        viewModel.signUp(name, email, password)
+                    },
+
+                    contentPadding = PaddingValues(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(cornerRadius),
+                    // todo enabled = name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirm.isNotEmpty() && password == confirm
+                ) {
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                brush = Brush.horizontalGradient(colors = gradientColor),
+                                shape = RoundedCornerShape(topStart = 30.dp, bottomEnd = 30.dp)
+                            )
+                            .clip(RoundedCornerShape(topStart = 30.dp, bottomEnd = 30.dp))
+                            /*.background(
+                                brush = Brush.linearGradient(colors = gradientColors),
+                                shape = RoundedCornerShape(cornerRadius)
+                            )*/
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Create An Account",
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.padding(10.dp))
                 TextButton(onClick = {
@@ -241,11 +448,11 @@ fun GradientButton(
 fun RegisterName(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var text by rememberSaveable { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
 
     OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
+        value = name,
+        onValueChange = { name = it },
         shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
         label = {
             Text("Name",
@@ -315,11 +522,11 @@ fun RegisterPhone() {
 @Composable
 fun RegisterEmail(
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var text by rememberSaveable { mutableStateOf("") }
+    val keyboardControllerEmail = LocalSoftwareKeyboardController.current
+    var email by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(
-        value = text,
-        onValueChange = { text = it },
+        value = email,
+        onValueChange = { email = it },
         shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
         label = {
             Text("Email Address",
@@ -338,7 +545,7 @@ fun RegisterEmail(
         modifier = Modifier.fillMaxWidth(0.8f),
         keyboardActions = KeyboardActions(
             onDone = {
-                keyboardController?.hide()
+                keyboardControllerEmail?.hide()
                 // do something here
             }
         )
@@ -351,7 +558,7 @@ fun RegisterEmail(
 @Composable
 fun RegisterPassword(
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val keyboardControllerPass = LocalSoftwareKeyboardController.current
     var password by rememberSaveable { mutableStateOf("") }
     var passwordHidden by rememberSaveable { mutableStateOf(true) }
     OutlinedTextField(
@@ -385,7 +592,7 @@ fun RegisterPassword(
         modifier = Modifier.fillMaxWidth(0.8f),
         keyboardActions = KeyboardActions(
             onDone = {
-                keyboardController?.hide()
+                keyboardControllerPass?.hide()
                 // do something here
             }
         )
@@ -396,12 +603,12 @@ fun RegisterPassword(
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPasswordConfirm() {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
+    val keyboardControllerConfirm = LocalSoftwareKeyboardController.current
+    var Confirmpassword by rememberSaveable { mutableStateOf("") }
+    var ConfirmpasswordHidden by rememberSaveable { mutableStateOf(true) }
     OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
+        value = Confirmpassword,
+        onValueChange = { Confirmpassword = it },
         shape = RoundedCornerShape(topEnd =12.dp, bottomStart =12.dp),
         label = {
             Text("Confirm Password",
@@ -409,7 +616,7 @@ fun RegisterPasswordConfirm() {
                 style = MaterialTheme.typography.labelMedium,
             ) },
         visualTransformation =
-        if (passwordHidden) PasswordVisualTransformation() else VisualTransformation.None,
+        if (ConfirmpasswordHidden) PasswordVisualTransformation() else VisualTransformation.None,
         //  keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done,
@@ -419,18 +626,18 @@ fun RegisterPasswordConfirm() {
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             unfocusedBorderColor = MaterialTheme.colorScheme.primary),
         trailingIcon = {
-            IconButton(onClick = { passwordHidden = !passwordHidden }) {
+            IconButton(onClick = { ConfirmpasswordHidden = !ConfirmpasswordHidden }) {
                 val visibilityIcon =
-                    if (passwordHidden) Visibility else VisibilityOff
+                    if (ConfirmpasswordHidden) Visibility else VisibilityOff
                 // Please provide localized description for accessibility services
-                val description = if (passwordHidden) "Show password" else "Hide password"
+                val description = if (ConfirmpasswordHidden) "Show password" else "Hide password"
                 Icon(imageVector = visibilityIcon, contentDescription = description)
             }
         },
         modifier = Modifier.fillMaxWidth(0.8f),
         keyboardActions = KeyboardActions(
             onDone = {
-                keyboardController?.hide()
+                keyboardControllerConfirm?.hide()
                 // do something here
             }
         ),
