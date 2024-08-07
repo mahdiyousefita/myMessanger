@@ -2,7 +2,9 @@ package com.example.tasksymphony2.autefeature.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,8 +13,28 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor() : ViewModel() {
 
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
+
     private val _state = MutableStateFlow<SignUpState>(SignUpState.Nothing)
     val state = _state.asStateFlow()
+
+
+    init {
+//        if (_state.value == SignUpState.Success){
+//            addUserToDB()
+//        }
+    }
+
+    private fun addUserToDB(){
+        val user = mapOf(
+            "email" to firebaseAuth.currentUser!!.email,
+            "name" to firebaseAuth.currentUser!!.displayName,
+        )
+        val userRef = db.collection("Users").document(firebaseAuth.currentUser!!.uid)
+        userRef.set(user)
+
+    }
 
     fun signUp(name: String, email: String, password: String){
         _state.value = SignUpState.Loading

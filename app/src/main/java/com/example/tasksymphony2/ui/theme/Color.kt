@@ -2,7 +2,10 @@ package com.example.tasksymphony2.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
+
+val Gray = Color(0xFF4A4A4A)
+
+val Blue = Color(0xFF3780DC)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 

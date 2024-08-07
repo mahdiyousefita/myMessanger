@@ -14,6 +14,7 @@ firebaseCrashlyticsBuldtools = "2.9.9"
 hilt-compose = "1.2.0"
 coil = "2.6.0"
 material3Android = "1.2.1"
+firebaseFirestoreKtx = "25.0.0"
 
 
 [libraries]
@@ -38,6 +39,7 @@ dagger-hilt-compose = {module = "androidx.hilt:hilt-navigation-compose", version
 firebase-crashlytics-buildtools = {group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuldtools"}
 coil = {module = "io.coil-kt:coil-compose", version.ref = "coil"}
 androidx-material3-android = {group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android"}
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
