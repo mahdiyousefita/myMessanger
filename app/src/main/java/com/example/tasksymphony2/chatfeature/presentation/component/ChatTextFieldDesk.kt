@@ -62,7 +62,7 @@ fun ChatTextFieldDesk(
                     .clickable { onSendBtnClicked() }
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_add_24),
+                    painter = painterResource(id = R.drawable.baseline_arrow_upward_24),
                     contentDescription = null,
                     tint = Gray,
                     modifier = Modifier.align(Alignment.Center)

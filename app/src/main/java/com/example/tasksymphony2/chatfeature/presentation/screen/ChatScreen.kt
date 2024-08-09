@@ -126,14 +126,16 @@ fun ChatMessages(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .clickable {
-                                    onSendMessage(msg.value)
-                                    msg.value = ""
+                                    if (msg.value.isNotEmpty()){
+                                        onSendMessage(msg.value)
+                                        msg.value = ""
+                                    }
                                 }
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.baseline_add_24),
+                                painter = painterResource(id = R.drawable.baseline_arrow_upward_24),
                                 contentDescription = null,
-                                tint = Gray,
+                                tint = Color(0xFF008AFD),
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }
@@ -163,16 +165,18 @@ fun ChatMessages(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 40.dp)
+                    .padding(bottom = 80.dp)
                     .constrainAs(chatLazy) {
-                        top.linkTo(parent.top)
+                        top.linkTo(parent.top, margin = 60.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         bottom.linkTo(bottomChatDesk.top)
                     }
             ) {
-                LazyColumn {
-                    items(messages) { messages ->
+                LazyColumn(
+                    reverseLayout = true
+                ) {
+                    items(messages.reversed()) { messages ->
                         ChatBubble(message = messages)
                     }
                 }
@@ -186,9 +190,9 @@ fun ChatMessages(
 fun ChatBubble(message: Message){
     val isCurrentUser = message.senderId == Firebase.auth.currentUser?.uid
     val bubbleColor = if (isCurrentUser){
-        Color.Blue
+        Color(0xFF008AFD)
     } else {
-        Color.Red
+        Color(0xFF26252A)
     }
 
     Box (
